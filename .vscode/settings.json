@@ -1,5 +1,6 @@
 {
     "python.pythonPath": "C:\\Program Files\\Python37\\python.exe",
     "python.linting.pep8Enabled": true,
-    "python.unitTest.pyTestEnabled": true
+    "python.unitTest.pyTestEnabled": true,
+    "python.analysis.openFilesOnly": false
 }
