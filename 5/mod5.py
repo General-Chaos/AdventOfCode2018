@@ -1,6 +1,7 @@
 import sys
 import copy
 
+
 # I wrote this as a recursive function but it broke the recursion depth:)
 def pair_destroy(compound: str):
     result = ''
