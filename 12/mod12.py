@@ -36,12 +36,12 @@ def fill_notes(notes):
 
 
 def parse_input(input_string):
-    result = []
+    result = set()
     for i in range(len(input_string)):
         if input_string[i] == '#':
-            result.append((i, True))
+            result.add(i)
         else:
-            result.append((i, False))
+            pass
     return result
 
 
@@ -52,27 +52,26 @@ class Plants():
 
     def iterate(self, rules, rounds):
         for _ in range(rounds):
-            new_plants = list()
-            start = self.plants[0][0]
-            for i in range(-2, (len(self.plants)+2)):
-                octal = list()
+            new_plants = set()
+            octals = [1, 2, 4, 8, 16]
+            start = min(self.plants)
+            end = max(self.plants)
+            for i in range(start - 2, end + 2):
                 octal_sum = 0
-                for j in range((i - 2), (i + 3)):
-                    if j < 0 or j >= (len(self.plants)):
-                        octal.append(False)
-                    else:
-                        octal.append(self.plants[j][1])
-                for j in range(len(octal)):
-                    if octal[j]:
-                        octal_sum += pow(2, j)
+                for j in range(5):
+                    if (i - 2 + j) in self.plants:
+                        octal_sum += octals[j]
                     else:
                         pass
-                new_plants.append((i + start, rules[octal_sum]))
+                if rules[octal_sum]:
+                    new_plants.add(i)
+                else:
+                    pass
             self.plants = new_plants
 
     @property
     def true_sum(self):
-        return sum([x[0] for x in self.plants if x[1]])
+        return sum(self.plants)
 
 
 if __name__ == "__main__":
