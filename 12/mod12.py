@@ -59,7 +59,7 @@ class Plants():
         end = max(plants)
         octal_list = None
         for i in range(start - 2, end + 2):
-            if octal_list == None:
+            if octal_list is None:
                 octal_list = []
                 for j in range(5):
                     if (i - 2 + j) in plants:
@@ -88,7 +88,8 @@ class Plants():
     def true_sum(self):
         return sum(self.plants)
 
-    # For part 2 we wait for the linear regression to settle into a fixed line, then calculate
+    # For part 2 we wait for the linear regression to settle into a fixed line
+    # then calculate the estimated final value
     def estimate_true_sum(self, rules, rounds):
         plants = self.plants.copy()
         rounds_reg_same = 0
