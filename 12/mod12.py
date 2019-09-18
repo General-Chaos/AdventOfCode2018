@@ -12,24 +12,26 @@ def parse_notes(notes):
         else:
             result = False
         octal = list(match.group(1))
-        octal_sum = 0
+        octal_list = []
         for j in range(len(octal)):
             if octal[j] == '#':
-                octal_sum += pow(2, j)
-        notes_octal.update({octal_sum: result})
+                octal_list.append(True)
+            else:
+                octal_list.append(False)
+        notes_octal.update({tuple(octal_list): result})
     return notes_octal
 
 
 def fill_notes(notes):
     for i in product([True, False], repeat=5):
-        octal_sum = 0
+        octal_list = []
         for j in range(5):
             if i[j]:
-                octal_sum += pow(2, j)
+                octal_list.append(True)
             else:
-                pass
-        if octal_sum not in notes.keys():
-            notes[octal_sum] = False
+                octal_list.append(False)
+        if tuple(octal_list) not in notes.keys():
+            notes[tuple(octal_list)] = False
         else:
             pass
     return notes
@@ -50,28 +52,57 @@ class Plants():
     def __init__(self, plants):
         self.plants = plants
 
-    def iterate(self, rules, rounds):
-        for _ in range(rounds):
-            new_plants = set()
-            octals = [1, 2, 4, 8, 16]
-            start = min(self.plants)
-            end = max(self.plants)
-            for i in range(start - 2, end + 2):
-                octal_sum = 0
+    @staticmethod
+    def _get_new_plants(plants, rules):
+        new_plants = set()
+        start = min(plants)
+        end = max(plants)
+        octal_list = None
+        for i in range(start - 2, end + 2):
+            if octal_list == None:
+                octal_list = []
                 for j in range(5):
-                    if (i - 2 + j) in self.plants:
-                        octal_sum += octals[j]
+                    if (i - 2 + j) in plants:
+                        octal_list.append(True)
                     else:
-                        pass
-                if rules[octal_sum]:
+                        octal_list.append(False)
+                if rules[tuple(octal_list)]:
                     new_plants.add(i)
                 else:
                     pass
-            self.plants = new_plants
+            else:
+                octal_list = octal_list[1:]
+                if (i + 2) in plants:
+                    octal_list.append(True)
+                else:
+                    octal_list.append(False)
+                if rules[tuple(octal_list)]:
+                    new_plants.add(i)
+        return new_plants
+
+    def iterate(self, rules, rounds):
+        for _ in range(rounds):
+            self.plants = self._get_new_plants(self.plants, rules)
 
     @property
     def true_sum(self):
         return sum(self.plants)
+
+    # For part 2 we wait for the linear regression to settle into a fixed line, then calculate
+    def estimate_true_sum(self, rules, rounds):
+        plants = self.plants.copy()
+        rounds_reg_same = 0
+        reg = (0, 0)
+        round_c = 1
+        while rounds_reg_same < 100:
+            plants = self._get_new_plants(plants, rules)
+            plants_reg = divmod(sum(plants), round_c)
+            if plants_reg == reg:
+                rounds_reg_same += 1
+            else:
+                reg = plants_reg
+            round_c += 1
+        return (rounds * reg[0]) + reg[1]
 
 
 if __name__ == "__main__":
